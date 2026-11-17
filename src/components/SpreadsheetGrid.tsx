@@ -186,7 +186,7 @@ export const SpreadsheetGrid: React.FC = () => {
             Grid Spreadsheet MonGRC
           </h1>
           <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">
-            MAtriks tata kelola Ditjen P2, nilai normalisasi (P-Scores), rata-rata, dan rekapitulasi.
+            Matriks nilai dimensi tata kelola, nilai kinerja (normalisasi/P-Scores).
           </p>
         </div>
 

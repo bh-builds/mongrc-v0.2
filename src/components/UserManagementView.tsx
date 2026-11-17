@@ -225,10 +225,10 @@ export const UserManagementView: React.FC = () => {
       <div className="space-y-6">
         <div className="pb-2 border-b border-slate-200 dark:border-slate-800">
           <h1 className="text-2xl font-extrabold text-slate-900 dark:text-slate-50 tracking-tight">
-            Manajemen Akun dan Otoritas
+            Manajemen Akun
           </h1>
           <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">
-            Pengelolaan akun dan hak akses.
+            Pengelolaan akun pengguna dan hak akses.
           </p>
         </div>
 

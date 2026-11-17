@@ -65,7 +65,7 @@ export const HeatmapMatrix: React.FC = () => {
             Matriks Heatmap Kinerja GRC
           </h1>
           <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">
-            Visualisasi spasial dimensi tata kelola identifikasi celah kepatuhan dan anomali.
+            Visualisasi spasial atas dimensi tata kelola dan identifikasi celah kepatuhan serta anomali.
           </p>
         </div>
 
