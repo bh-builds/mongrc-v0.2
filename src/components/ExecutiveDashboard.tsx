@@ -248,15 +248,15 @@ export const ExecutiveDashboard: React.FC = () => {
             </div>
 
             {/* Selectors for Satker */}
-            <div className="flex items-center gap-2">
-              <div>
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2.5 sm:gap-2 w-full sm:w-auto">
+              <div className="w-full sm:w-auto min-w-0">
                 <label className="block text-[10px] font-semibold text-slate-500 dark:text-slate-400 mb-1">
                   Satker Utama:
                 </label>
                 <select
                   value={primarySatker?.no ?? radarPrimaryId}
                   onChange={e => setRadarPrimaryId(parseInt(e.target.value, 10))}
-                  className="text-xs font-medium bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-md px-2.5 py-1.5 text-slate-800 dark:text-slate-100 focus:outline-hidden focus:ring-1 focus:ring-blue-600"
+                  className="w-full sm:w-auto text-xs font-medium bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-md px-2.5 py-1.5 text-slate-800 dark:text-slate-100 focus:outline-hidden focus:ring-1 focus:ring-blue-600"
                 >
                   {satkers.map(s => (
                     <option key={s.no} value={s.no}>
@@ -266,14 +266,14 @@ export const ExecutiveDashboard: React.FC = () => {
                 </select>
               </div>
 
-              <div>
+              <div className="w-full sm:w-auto min-w-0">
                 <label className="block text-[10px] font-semibold text-slate-500 dark:text-slate-400 mb-1">
                   Bandingkan:
                 </label>
                 <select
                   value={radarCompareId ?? ''}
                   onChange={e => setRadarCompareId(e.target.value ? parseInt(e.target.value, 10) : null)}
-                  className="text-xs font-medium bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-md px-2.5 py-1.5 text-slate-800 dark:text-slate-100 focus:outline-hidden focus:ring-1 focus:ring-amber-600"
+                  className="w-full sm:w-auto text-xs font-medium bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-md px-2.5 py-1.5 text-slate-800 dark:text-slate-100 focus:outline-hidden focus:ring-1 focus:ring-amber-600"
                 >
                   <option value="">(Tidak Ada)</option>
                   {satkers.map(s => (
