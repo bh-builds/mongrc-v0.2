@@ -61,7 +61,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenLoginModal }) => {
   return (
     <header className="sticky top-0 z-30 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 shadow-xs transition-colors duration-150">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between gap-3 h-16">
+        <div className="flex items-center justify-between gap-2 sm:gap-3 h-16 min-w-0">
           {/* Zone 1: Wordmark with official logo + active Periode - Tahun selector */}
           <div className="flex items-center gap-3 shrink-0">
             <div className="flex items-center gap-2.5 shrink-0 cursor-pointer" onClick={() => setActiveTab('executive')}>
@@ -167,7 +167,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenLoginModal }) => {
           </nav>
 
           {/* Zone 3: Theme Toggle + Actions & Active User / Persona */}
-          <div className="flex items-center gap-2 shrink-0">
+          <div className="flex items-center gap-2 min-w-0 shrink">
             {/* Light / Dark Mode Toggle Button (positioned between Manajemen Pengguna and Ekspor/Impor CSV) */}
             <button
               type="button"
@@ -264,10 +264,10 @@ export const Header: React.FC<HeaderProps> = ({ onOpenLoginModal }) => {
 
             {/* User Account / Profile Dropdown (Show compact Sign-In CTA for Public Viewer) */}
             {currentUser && currentUser.role !== 'Viewer' ? (
-              <div className="relative">
+              <div className="relative min-w-0 shrink max-w-full">
                 <button
                   onClick={() => setShowUserDropdown(prev => !prev)}
-                  className="flex items-center gap-2 p-1.5 pr-2.5 text-left rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700/80 transition-colors cursor-pointer"
+                  className="flex items-center gap-2 p-1.5 pr-2.5 w-full max-w-full min-w-0 overflow-hidden text-left rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700/80 transition-colors cursor-pointer"
                   title="Menu Profil & Manajemen Akun"
                 >
                   <div className={`w-7 h-7 rounded-full text-white flex items-center justify-center text-xs font-semibold shrink-0 ${
@@ -277,17 +277,17 @@ export const Header: React.FC<HeaderProps> = ({ onOpenLoginModal }) => {
                   }`}>
                     {currentUser.avatarInitials}
                   </div>
-                  <div className="hidden lg:block text-left">
+                  <div className="hidden lg:block text-left min-w-0 flex-1 overflow-hidden">
                     <div className="text-xs font-semibold text-slate-900 dark:text-slate-100 leading-tight truncate max-w-[125px]">
                       {currentUser.name}
                     </div>
-                    <div className="text-[10px] text-slate-500 dark:text-slate-400 flex items-center gap-1">
-                      <span className="font-semibold text-blue-700 dark:text-blue-400">{currentUser.role}</span>
-                      <span>·</span>
-                      <span className="truncate max-w-[90px]">{currentUser.assignedSatker || currentUser.agency}</span>
+                    <div className="text-[10px] text-slate-500 dark:text-slate-400 flex items-center gap-1 min-w-0 overflow-hidden">
+                      <span className="font-semibold text-blue-700 dark:text-blue-400 shrink-0">{currentUser.role}</span>
+                      <span className="shrink-0">·</span>
+                      <span className="truncate min-w-0 flex-1 max-w-[90px]">{currentUser.assignedSatker || currentUser.agency}</span>
                     </div>
                   </div>
-                  <ChevronDown className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" />
+                  <ChevronDown className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400 shrink-0" />
                 </button>
 
                 {/* Dropdown Menu */}
