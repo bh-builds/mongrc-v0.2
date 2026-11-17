@@ -1,0 +1,8 @@
+{
+  "name": "MonGRC GS v2",
+  "description": "MonGRC Google Sheet v2 (quarterly evaluation enabled)",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
