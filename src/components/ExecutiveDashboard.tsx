@@ -404,7 +404,7 @@ export const ExecutiveDashboard: React.FC = () => {
                 Peringkat Seluruh Satuan Kerja
               </h2>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                Daftar lengkap {satkers.length} unit kerja diurutkan berdasarkan skor komposit GRC. Klik baris untuk telaah detail & kolaborasi.
+                Daftar lengkap {satkers.length} unit kerja diurutkan berdasarkan skor komposit GRC. Klik baris untuk telaah detail.
               </p>
             </div>
 

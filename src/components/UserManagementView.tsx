@@ -841,7 +841,7 @@ export const UserManagementView: React.FC = () => {
               </h3>
             </div>
             <p className="text-sm text-slate-600 dark:text-slate-300 mb-4 leading-relaxed">
-              Apakah Anda yakin ingin menghapus akun <strong>{deletingUser.name}</strong> (@{deletingUser.username})? Tindakan ini akan dicatat dalam log audit sistem.
+              Apakah Anda yakin ingin menghapus akun <strong>{deletingUser.name}</strong> (@{deletingUser.username})?
             </p>
             <div className="flex justify-end gap-2.5">
               <button

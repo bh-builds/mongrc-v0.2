@@ -14,7 +14,6 @@ import {
 import { SatkerData, IndicatorMeta } from '../types/mongrc';
 import { 
   Search, 
-  MessageSquare, 
   X, 
   Check,
   AlertCircle,
@@ -36,7 +35,6 @@ export const SpreadsheetGrid: React.FC = () => {
     summaryStats,
     updateSatkerField,
     canEditSatker,
-    comments,
     appConfig,
   } = useGRC();
 
@@ -53,7 +51,6 @@ export const SpreadsheetGrid: React.FC = () => {
     initialValue: number | null;
   } | null>(null);
   const [editInputVal, setEditInputVal] = useState<string>('');
-  const [editReason, setEditReason] = useState<string>('');
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [hoveredCell, setHoveredCell] = useState<{
     satker: SatkerData;
@@ -121,7 +118,6 @@ export const SpreadsheetGrid: React.FC = () => {
       initialValue: currentVal,
     });
     setEditInputVal(currentVal !== null ? String(currentVal) : '');
-    setEditReason('');
     setErrorMsg(null);
   };
 
@@ -151,8 +147,7 @@ export const SpreadsheetGrid: React.FC = () => {
     const result = await updateSatkerField(
       editingCell.satkerNo,
       editingCell.fieldKey,
-      parsedVal,
-      editReason.trim() || `Pembaruan nilai oleh ${currentUser?.name || 'Pengguna'}`
+      parsedVal
     );
 
     if (result.success) {
@@ -167,15 +162,6 @@ export const SpreadsheetGrid: React.FC = () => {
     setEditingCell(null);
     setErrorMsg(null);
   };
-
-  // Count comments per satker
-  const commentCountsBySatker = useMemo(() => {
-    const counts: Record<number, number> = {};
-    comments.forEach(c => {
-      counts[c.satkerNo] = (counts[c.satkerNo] || 0) + 1;
-    });
-    return counts;
-  }, [comments]);
 
   return (
     <div className="space-y-6">
@@ -376,7 +362,6 @@ export const SpreadsheetGrid: React.FC = () => {
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
               {filteredSatkers.map(s => {
                 const canEditThis = canEditSatker(s);
-                const commentCount = commentCountsBySatker[s.no] || 0;
 
                 return (
                   <tr 
@@ -390,16 +375,8 @@ export const SpreadsheetGrid: React.FC = () => {
                     <td className="py-2 px-3 text-left font-medium text-slate-900 dark:text-slate-100 truncate max-w-[200px] sticky left-10 bg-white dark:bg-slate-900 group-hover:bg-blue-50/40 dark:group-hover:bg-slate-800 z-10" title={s.unitKerja}>
                       {s.unitKerja}
                     </td>
-                    <td className="py-2 px-3 text-left font-bold text-blue-900 dark:text-blue-300 truncate max-w-[130px] sticky left-[250px] bg-white dark:bg-slate-900 group-hover:bg-blue-50/40 dark:group-hover:bg-slate-800 z-10 border-r-2 border-slate-300 dark:border-slate-700">
-                      <div className="flex items-center justify-between gap-1">
-                        <span className="truncate">{s.satker}</span>
-                        {commentCount > 0 && (
-                          <span className="inline-flex items-center gap-0.5 text-[10px] text-blue-700 dark:text-blue-300 bg-blue-100 dark:bg-blue-900/60 px-1 py-0.2 rounded-xs font-mono">
-                            <MessageSquare className="w-2.5 h-2.5" />
-                            {commentCount}
-                          </span>
-                        )}
-                      </div>
+                    <td className="py-2 px-3 text-left font-bold text-blue-900 dark:text-blue-300 truncate max-w-[130px] sticky left-[250px] bg-white dark:bg-slate-900 group-hover:bg-blue-50/40 dark:group-hover:bg-slate-800 z-10 border-r-2 border-slate-300 dark:border-slate-700" title={s.satker}>
+                      {s.satker}
                     </td>
 
                     {/* Raw Metric Cells (Click to edit!) */}
@@ -526,7 +503,7 @@ export const SpreadsheetGrid: React.FC = () => {
                     <td className="py-2 px-2 text-center whitespace-nowrap">
                       <button
                         onClick={() => setSelectedSatkerNo(s.no)}
-                        title="Buka panel telaah detail & diskusi kolaborasi"
+                        title="Buka panel telaah detail Satker"
                         className="inline-flex items-center gap-1 px-2 py-1 text-[10px] font-medium text-blue-900 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/60 hover:bg-blue-100 dark:hover:bg-blue-900/60 rounded-md transition-colors cursor-pointer"
                       >
                         <Eye className="w-3 h-3" />

@@ -15,8 +15,6 @@ import {
   Settings,
   Users,
   BarChart3,
-  MessageSquare,
-  History,
   Link2,
   Copy,
   Check,
@@ -45,8 +43,6 @@ export const DatabaseConfigModal: React.FC = () => {
     refreshFromSpreadsheet,
     satkers,
     users,
-    auditLogs,
-    comments,
     currentUser,
   } = useGRC();
 
@@ -287,7 +283,7 @@ export const DatabaseConfigModal: React.FC = () => {
             )}
 
             {/* Live Collection Summary */}
-            <div className={`grid grid-cols-2 ${isAdmin ? 'sm:grid-cols-4' : 'sm:grid-cols-3'} gap-2 pt-1`}>
+            <div className={`grid grid-cols-1 ${isAdmin ? 'sm:grid-cols-2' : ''} gap-2 pt-1`}>
               <div className="p-2.5 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
                 <div className="flex items-center gap-1.5 text-[10px] font-semibold text-slate-500 dark:text-slate-400 uppercase">
                   <BarChart3 className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
@@ -308,24 +304,6 @@ export const DatabaseConfigModal: React.FC = () => {
                   </div>
                 </div>
               )}
-              <div className="p-2.5 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
-                <div className="flex items-center gap-1.5 text-[10px] font-semibold text-slate-500 dark:text-slate-400 uppercase">
-                  <History className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
-                  <span>Log Audit</span>
-                </div>
-                <div className="mt-1 font-mono font-bold text-sm text-slate-900 dark:text-slate-100">
-                  {auditLogs.length} Entri
-                </div>
-              </div>
-              <div className="p-2.5 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
-                <div className="flex items-center gap-1.5 text-[10px] font-semibold text-slate-500 dark:text-slate-400 uppercase">
-                  <MessageSquare className="w-3.5 h-3.5 text-purple-600 dark:text-purple-400" />
-                  <span>Catatan Pembinaan</span>
-                </div>
-                <div className="mt-1 font-mono font-bold text-sm text-slate-900 dark:text-slate-100">
-                  {comments.length} Catatan
-                </div>
-              </div>
             </div>
           </div>
 

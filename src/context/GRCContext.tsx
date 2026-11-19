@@ -11,8 +11,6 @@ import {
 import {
   SatkerData,
   UserProfile,
-  ThreadedComment,
-  AuditLogEntry,
   AppConfiguration,
 } from '../types/mongrc';
 import {
@@ -87,86 +85,6 @@ export const INITIAL_USERS: UserProfile[] = [
 
 export const DEMO_USERS = INITIAL_USERS;
 
-const INITIAL_COMMENTS: ThreadedComment[] = [
-  {
-    id: 'comm-1',
-    satkerNo: 1,
-    indicatorKey: 'iepk',
-    authorId: 'user-auditor-1',
-    authorName: 'Dra. Endang Sulastri, M.M., CRGP',
-    authorRole: 'Auditor',
-    content:
-      'Capaian IEPK Batam saat ini 2.99 masih di bawah ambang batas 4.00. Perlu percepatan pelaporan LHKPN dan evaluasi berkala tim penanganan benturan kepentingan.',
-    createdAt: '2026-11-08 09:15',
-    status: 'in_review',
-  },
-  {
-    id: 'comm-2',
-    satkerNo: 1,
-    indicatorKey: 'iepk',
-    authorId: 'user-pic-batam',
-    authorName: 'Dr. Rian Pratama, M.K.M.',
-    authorRole: 'Satker PIC',
-    content:
-      'Siap Ibu Auditor, berkas evidensi pengendalian gratifikasi per November telah kami unggah ke e-SPIP. Mohon re-verifikasi.',
-    createdAt: '2026-11-09 11:30',
-    status: 'in_review',
-  },
-  {
-    id: 'comm-3',
-    satkerNo: 2,
-    indicatorKey: 'nka',
-    authorId: 'user-admin-1',
-    authorName: 'Budi Hermawan, S.Kom., M.T.I.',
-    authorRole: 'Admin',
-    content:
-      'Realisasi NKA Denpasar 74.69 perlu peningkatan menuju target nasional 92.55. Mohon koordinasi dengan KPPN setempat terkait percepatan serapan output strategis triwulan IV.',
-    createdAt: '2026-11-07 14:20',
-    status: 'open',
-  },
-  {
-    id: 'comm-4',
-    satkerNo: 11,
-    indicatorKey: 'spip',
-    authorId: 'user-auditor-1',
-    authorName: 'Dra. Endang Sulastri, M.M., CRGP',
-    authorRole: 'Auditor',
-    content:
-      'Apresiasi untuk BKK Kelas I Bandung dengan capaian SPIP 4.53 dan SAKIP 84.85, telah melampaui seluruh indikator maturitas governance.',
-    createdAt: '2026-11-06 16:45',
-    status: 'resolved',
-  },
-];
-
-const INITIAL_AUDIT_LOGS: AuditLogEntry[] = [
-  {
-    id: 'audit-1',
-    timestamp: '2026-11-08 10:20:15',
-    authorName: 'Budi Hermawan, S.Kom., M.T.I.',
-    authorRole: 'Admin',
-    satkerNo: 11,
-    satkerName: 'Bandung',
-    indicatorKey: 'spip',
-    indicatorLabel: 'SPIP',
-    oldValue: '4.40',
-    newValue: '4.53',
-    reason: 'Validasi laporan penjaminan mutu BPKP tahap II tahun 2026',
-  },
-  {
-    id: 'audit-2',
-    timestamp: '2026-11-07 15:45:00',
-    authorName: 'Dr. Rian Pratama, M.K.M.',
-    authorRole: 'Satker PIC',
-    satkerNo: 1,
-    satkerName: 'Batam',
-    indicatorKey: 'ikpa',
-    indicatorLabel: 'IKPA',
-    oldValue: '98.50',
-    newValue: '99.02',
-    reason: 'Pembaruan data resmi OMSPAN Kemenkeu per 31 Oktober',
-  },
-];
-
 const USERS_STORAGE_KEY = 'mongrc_users_v1';
 const PASSWORDS_STORAGE_KEY = 'mongrc_user_passwords_v1';
 const SESSION_USER_KEY = 'mongrc_session_user_id_v1';
@@ -235,7 +153,7 @@ function isSameSatkerPeriodRecord(
     (!candPeriod || !wantPeriod || candPeriod === wantPeriod);
 }
 
-export type NavigationTab = 'executive' | 'heatmap' | 'spreadsheet' | 'audit' | 'users';
+export type NavigationTab = 'executive' | 'heatmap' | 'spreadsheet' | 'users';
 
 interface GRCContextType {
   allSatkers: SatkerData[];
@@ -286,14 +204,11 @@ interface GRCContextType {
   availableYears: string[];
   availablePeriods: string[];
   availablePeriodsForYear: string[];
-  comments: ThreadedComment[];
-  auditLogs: AuditLogEntry[];
   summaryStats: ReturnType<typeof calculateSummaryStats>;
   updateSatkerField: (
     satkerNo: number,
     fieldKey: keyof SatkerData,
-    newValue: number | null,
-    reason: string
+    newValue: number | null
   ) => Promise<{ success: boolean; error?: string }>;
   saveSatkerScores: (
     satkerNo: number,
@@ -302,11 +217,8 @@ interface GRCContextType {
         SatkerData,
         'ski' | 'spip' | 'mri' | 'iepk' | 'spipt' | 'wbkRb' | 'sakip' | 'nka' | 'ikpa' | 'ipAsn' | 'arsip' | 'pekppp'
       >
-    >,
-    reason: string
+    >
   ) => Promise<{ success: boolean; error?: string }>;
-  addComment: (satkerNo: number, indicatorKey: string, content: string) => void;
-  updateCommentStatus: (commentId: string, status: ThreadedComment['status']) => void;
   bulkImportSatkers: (imported: SatkerData[]) => Promise<void>;
   resetToBaselineData: () => Promise<void>;
   canEditSatker: (satker: SatkerData) => boolean;
@@ -546,26 +458,6 @@ export const GRCProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     if (byNo.size > 0) return Array.from(byNo.values()).sort((a, b) => a.no - b.no);
     return BASELINE_SATKERS;
   }, [satkers, allSatkers]);
-
-  const [comments, setComments] = useState<ThreadedComment[]>(() => {
-    try {
-      const stored = localStorage.getItem('mongrc_comments_v1');
-      if (stored) return JSON.parse(stored);
-    } catch (e) {
-      console.warn('Failed to parse stored comments:', e);
-    }
-    return INITIAL_COMMENTS;
-  });
-
-  const [auditLogs, setAuditLogs] = useState<AuditLogEntry[]>(() => {
-    try {
-      const stored = localStorage.getItem('mongrc_audit_logs_v1');
-      if (stored) return JSON.parse(stored);
-    } catch (e) {
-      console.warn('Failed to parse stored audit logs:', e);
-    }
-    return INITIAL_AUDIT_LOGS;
-  });
 
   // Google Apps Script Endpoint State
   const [appsScriptUrl, setAppsScriptUrl] = useState<string>(() => getStoredAppsScriptUrl());
@@ -945,22 +837,6 @@ export const GRCProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   }, [allSatkers]);
 
-  useEffect(() => {
-    try {
-      localStorage.setItem('mongrc_comments_v1', JSON.stringify(comments));
-    } catch (e) {
-      console.warn('Storage error for comments:', e);
-    }
-  }, [comments]);
-
-  useEffect(() => {
-    try {
-      localStorage.setItem('mongrc_audit_logs_v1', JSON.stringify(auditLogs));
-    } catch (e) {
-      console.warn('Storage error for audit logs:', e);
-    }
-  }, [auditLogs]);
-
   const summaryStats = useMemo(() => calculateSummaryStats(satkers), [satkers]);
 
   const login = async (
@@ -1130,22 +1006,7 @@ export const GRCProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     passwords[emailLower] = initialPassword;
     saveStoredPasswords(passwords);
 
-    const auditEntry: AuditLogEntry = {
-      id: `audit-${Date.now()}`,
-      timestamp: formatLocalTimestamp(),
-      authorName: currentUser.name,
-      authorRole: 'Admin',
-      satkerNo: userData.assignedSatkerNo || 0,
-      satkerName: userData.assignedSatker || 'Setditjen P2',
-      indicatorKey: 'user_management',
-      indicatorLabel: 'Penambahan Akun Pengguna',
-      oldValue: '-',
-      newValue: `${newUser.name} (${newUser.role})`,
-      reason: `Akun baru ditambahkan oleh ${currentUser.name}`,
-    };
-
     setDirectoryUsers((prev) => [newUser, ...prev]);
-    setAuditLogs((prev) => [auditEntry, ...prev]);
     return { success: true };
   };
 
@@ -1354,21 +1215,6 @@ export const GRCProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setCurrentUser(updatedUser);
     }
 
-    const auditEntry: AuditLogEntry = {
-      id: `audit-${Date.now()}`,
-      timestamp: formatLocalTimestamp(),
-      authorName: currentUser.name,
-      authorRole: 'Admin',
-      satkerNo: updatedUser.assignedSatkerNo || 0,
-      satkerName: updatedUser.assignedSatker || 'Setditjen P2',
-      indicatorKey: 'user_management',
-      indicatorLabel: 'Pembaruan Akun Pengguna',
-      oldValue: `${targetUser.name} (${targetUser.role} · ${targetUser.status})`,
-      newValue: `${updatedUser.name} (${updatedUser.role} · ${updatedUser.status})`,
-      reason: `Pembaruan data akun oleh ${currentUser.name}`,
-    };
-    setAuditLogs((prev) => [auditEntry, ...prev]);
-
     return { success: true };
   };
 
@@ -1408,21 +1254,6 @@ export const GRCProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
     setDirectoryUsers((prev) => prev.filter((u) => u.id !== userId));
 
-    const auditEntry: AuditLogEntry = {
-      id: `audit-${Date.now()}`,
-      timestamp: formatLocalTimestamp(),
-      authorName: currentUser.name,
-      authorRole: 'Admin',
-      satkerNo: targetUser.assignedSatkerNo || 0,
-      satkerName: targetUser.assignedSatker || 'Setditjen P2',
-      indicatorKey: 'user_management',
-      indicatorLabel: 'Penghapusan Akun Pengguna',
-      oldValue: `${targetUser.name} (${targetUser.role})`,
-      newValue: 'Dihapus',
-      reason: `Penghapusan akun oleh ${currentUser.name}`,
-    };
-    setAuditLogs((prev) => [auditEntry, ...prev]);
-
     return { success: true };
   };
 
@@ -1443,8 +1274,7 @@ export const GRCProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const persistSatkerMutation = useCallback(
     async (
       targetSatker: SatkerData,
-      finalSatker: SatkerData,
-      newAuditEntries: AuditLogEntry[]
+      finalSatker: SatkerData
     ): Promise<{ success: boolean; error?: string }> => {
       setAllSatkers((prev) =>
         prev.map((s) =>
@@ -1460,7 +1290,6 @@ export const GRCProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             : s
         )
       );
-      setAuditLogs((prev) => [...newAuditEntries, ...prev]);
 
       activeSavesRef.current += 1;
       setIsSyncingDb(true);
@@ -1490,8 +1319,6 @@ export const GRCProvider: React.FC<{ children: React.ReactNode }> = ({ children 
                 : s
             )
           );
-          const failedIds = new Set(newAuditEntries.map((e) => e.id));
-          setAuditLogs((prev) => prev.filter((e) => !failedIds.has(e.id)));
           return { success: false, error: msg };
         }
 
@@ -1510,8 +1337,7 @@ export const GRCProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const updateSatkerField = async (
     satkerNo: number,
     fieldKey: keyof SatkerData,
-    newValue: number | null,
-    reason: string
+    newValue: number | null
   ): Promise<{ success: boolean; error?: string }> => {
     const readOnlyCalculatedFields: Array<keyof SatkerData> = [
       'pSki',
@@ -1581,26 +1407,7 @@ export const GRCProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     };
 
     const finalSatker = recalculateSatkerScores(updatedDraft);
-    const meta = INDICATOR_METAS.find((m) => m.key === fieldKey);
-    const indicatorLabel = meta ? meta.label : String(fieldKey).toUpperCase();
-
-    const auditEntry: AuditLogEntry = {
-      id: `audit-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
-      timestamp: nowFormatted,
-      year: activeYear,
-      evaluationPeriod: activePeriod,
-      authorName: currentUser.name,
-      authorRole: currentUser.role,
-      satkerNo,
-      satkerName: targetSatker.satker,
-      indicatorKey: String(fieldKey),
-      indicatorLabel,
-      oldValue: oldValue !== null ? oldValue : '-',
-      newValue: newValue !== null ? newValue : '-',
-      reason: reason || 'Pembaruan skor berkala oleh ' + currentUser.name,
-    };
-
-    return persistSatkerMutation(targetSatker, finalSatker, [auditEntry]);
+    return persistSatkerMutation(targetSatker, finalSatker);
   };
 
   const saveSatkerScores = async (
@@ -1610,8 +1417,7 @@ export const GRCProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         SatkerData,
         'ski' | 'spip' | 'mri' | 'iepk' | 'spipt' | 'wbkRb' | 'sakip' | 'nka' | 'ikpa' | 'ipAsn' | 'arsip' | 'pekppp'
       >
-    >,
-    reason: string
+    >
   ): Promise<{ success: boolean; error?: string }> => {
     if (!currentUser || currentUser.role === 'Viewer') {
       return {
@@ -1644,9 +1450,9 @@ export const GRCProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const activePeriod =
       targetSatker.evaluationPeriod || selectedPeriod || appConfig.evaluationPeriod;
 
-    const newAuditEntries: AuditLogEntry[] = [];
     const allowedRawKeys = new Set<string>(INDICATOR_METAS.map((m) => m.key));
     const sanitizedUpdates: Partial<SatkerData> = {};
+    let hasChanges = false;
 
     for (const [key, nextVal] of Object.entries(updates)) {
       if (!allowedRawKeys.has(key)) continue;
@@ -1655,26 +1461,10 @@ export const GRCProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       if (prevVal === nextVal) continue;
 
       (sanitizedUpdates as Record<string, unknown>)[key] = nextVal;
-      const meta = INDICATOR_METAS.find((m) => m.key === key);
-      const label = meta ? meta.label : key.toUpperCase();
-      newAuditEntries.push({
-        id: `audit-${Date.now()}-${key}-${Math.random().toString(36).slice(2, 6)}`,
-        timestamp: nowFormatted,
-        year: activeYear,
-        evaluationPeriod: activePeriod,
-        authorName: currentUser.name,
-        authorRole: currentUser.role,
-        satkerNo,
-        satkerName: targetSatker.satker,
-        indicatorKey: key,
-        indicatorLabel: label,
-        oldValue: prevVal !== null && prevVal !== undefined ? prevVal : '-',
-        newValue: nextVal !== null && nextVal !== undefined ? nextVal : '-',
-        reason: reason.trim() || `Pembaruan skor melalui modal detail oleh ${currentUser.name}`,
-      });
+      hasChanges = true;
     }
 
-    if (newAuditEntries.length === 0) {
+    if (!hasChanges) {
       return { success: true };
     }
 
@@ -1688,43 +1478,7 @@ export const GRCProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     };
 
     const finalSatker = recalculateSatkerScores(updatedDraft);
-
-    return persistSatkerMutation(targetSatker, finalSatker, newAuditEntries);
-  };
-
-  const addComment = (satkerNo: number, indicatorKey: string, content: string) => {
-    if (!currentUser || currentUser.role === 'Viewer' || !content.trim()) {
-      return;
-    }
-
-    const newComment: ThreadedComment = {
-      id: `comm-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
-      satkerNo,
-      indicatorKey,
-      year: selectedYear,
-      evaluationPeriod: selectedPeriod,
-      authorId: currentUser.id,
-      authorName: currentUser.name,
-      authorRole: currentUser.role,
-      content: content.trim(),
-      createdAt: new Date().toLocaleString('id-ID', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-      }),
-      status: 'open',
-    };
-
-    setComments((prev) => [newComment, ...prev]);
-  };
-
-  const updateCommentStatus = (commentId: string, status: ThreadedComment['status']) => {
-    if (!currentUser || currentUser.role === 'Viewer') {
-      return;
-    }
-    setComments((prev) => prev.map((c) => (c.id === commentId ? { ...c, status } : c)));
+    return persistSatkerMutation(targetSatker, finalSatker);
   };
 
   const bulkImportSatkers = async (imported: SatkerData[]) => {
@@ -1760,22 +1514,6 @@ export const GRCProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     });
 
     const authorName = currentUser.name || 'Administrator';
-    const auditEntry: AuditLogEntry = {
-      id: `audit-${Date.now()}`,
-      timestamp: formatLocalTimestamp(),
-      year: selectedYear,
-      evaluationPeriod: selectedPeriod,
-      authorName,
-      authorRole: 'Admin',
-      satkerNo: 0,
-      satkerName: 'Semua Satker',
-      indicatorKey: 'bulk_import',
-      indicatorLabel: 'Impor Massal CSV',
-      oldValue: 'Versi Sebelumnya',
-      newValue: `${normalizedImported.length} Satker Dimuat`,
-      reason: `Pembaruan massal melalui unggah berkas CSV MonGRC oleh ${authorName}`,
-    };
-    setAuditLogs((prev) => [auditEntry, ...prev]);
 
     setIsSyncingDb(true);
     pushBulkSatkersToAppsScript(
@@ -1812,22 +1550,6 @@ export const GRCProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
     setAllSatkers(baselineForPeriod);
     const authorName = currentUser.name || 'Administrator';
-    const auditEntry: AuditLogEntry = {
-      id: `audit-${Date.now()}`,
-      timestamp: formatLocalTimestamp(),
-      year: selectedYear,
-      evaluationPeriod: selectedPeriod,
-      authorName,
-      authorRole: 'Admin',
-      satkerNo: 0,
-      satkerName: 'Semua Satker',
-      indicatorKey: 'system_reset',
-      indicatorLabel: 'Reset Data Standar',
-      oldValue: 'Skor Kustom',
-      newValue: `Baseline ${baselineForPeriod.length} Satker Resmi`,
-      reason: `Pengembalian data ke standar rujukan awal Kemenkes oleh ${authorName}`,
-    };
-    setAuditLogs((prev) => [auditEntry, ...prev]);
 
     setIsSyncingDb(true);
     pushBulkSatkersToAppsScript(
@@ -1888,13 +1610,9 @@ export const GRCProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         availableYears,
         availablePeriods,
         availablePeriodsForYear,
-        comments,
-        auditLogs,
         summaryStats,
         updateSatkerField,
         saveSatkerScores,
-        addComment,
-        updateCommentStatus,
         bulkImportSatkers,
         resetToBaselineData,
         canEditSatker,

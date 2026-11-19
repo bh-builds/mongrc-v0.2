@@ -26,8 +26,6 @@ export const FALLBACK_SHEET_NAMES = {
   data: 'Data',
   users: 'Users',
   config: 'Configuration',
-  audit: 'Audit_Logs',
-  comments: 'Comments',
 } as const;
 
 export const DEFAULT_APP_CONFIG: AppConfiguration = {
@@ -38,8 +36,6 @@ export const DEFAULT_APP_CONFIG: AppConfiguration = {
   dataSheetName: FALLBACK_SHEET_NAMES.data,
   usersSheetName: FALLBACK_SHEET_NAMES.users,
   configSheetName: FALLBACK_SHEET_NAMES.config,
-  auditSheetName: FALLBACK_SHEET_NAMES.audit,
-  commentsSheetName: FALLBACK_SHEET_NAMES.comments,
 };
 
 export function getStoredAppsScriptUrl(): string {
@@ -475,14 +471,6 @@ function mapRawConfigMapToAppConfig(
   const configSheetVal = kvMap['config_sheet_name'] ?? kvMap['configSheetName'];
   if (configSheetVal !== undefined && String(configSheetVal).trim()) {
     parsed.configSheetName = String(configSheetVal).trim();
-  }
-  const auditSheetVal = kvMap['audit_sheet_name'] ?? kvMap['auditSheetName'];
-  if (auditSheetVal !== undefined && String(auditSheetVal).trim()) {
-    parsed.auditSheetName = String(auditSheetVal).trim();
-  }
-  const commentsSheetVal = kvMap['comments_sheet_name'] ?? kvMap['commentsSheetName'];
-  if (commentsSheetVal !== undefined && String(commentsSheetVal).trim()) {
-    parsed.commentsSheetName = String(commentsSheetVal).trim();
   }
 
   if (meta?.updatedBy) parsed.updatedBy = meta.updatedBy;
@@ -975,9 +963,7 @@ const DEFAULT_CONFIG = {
   spreadsheet_edit_locked: true,
   data_sheet_name: DATA_SHEET_NAME,
   users_sheet_name: USERS_SHEET_NAME,
-  config_sheet_name: CONFIG_SHEET_NAME,
-  audit_sheet_name: 'Audit_Logs',
-  comments_sheet_name: 'Comments'
+  config_sheet_name: CONFIG_SHEET_NAME
 };
 
 const USER_HEADERS = [

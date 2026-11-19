@@ -10,11 +10,6 @@ const HeatmapMatrix = lazy(() =>
 const SpreadsheetGrid = lazy(() =>
   import('./components/SpreadsheetGrid').then((m) => ({ default: m.SpreadsheetGrid }))
 );
-const AuditAndCollaborationView = lazy(() =>
-  import('./components/AuditAndCollaborationView').then((m) => ({
-    default: m.AuditAndCollaborationView,
-  }))
-);
 const UserManagementView = lazy(() =>
   import('./components/UserManagementView').then((m) => ({ default: m.UserManagementView }))
 );
@@ -95,7 +90,6 @@ function MainApp() {
           {activeTab === 'executive' && <ExecutiveDashboard />}
           {activeTab === 'heatmap' && <HeatmapMatrix />}
           {activeTab === 'spreadsheet' && <SpreadsheetGrid />}
-          {activeTab === 'audit' && <AuditAndCollaborationView />}
           {activeTab === 'users' && <UserManagementView />}
         </Suspense>
       </main>

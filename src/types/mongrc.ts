@@ -90,38 +90,6 @@ export interface UserProfile {
   createdAt: string;
 }
 
-export interface ThreadedComment {
-  id: string;
-  satkerNo: number;
-  indicatorKey: string;
-  year?: string;
-  evaluationPeriod?: string;
-  authorId: string;
-  authorUid?: string;
-  authorName: string;
-  authorRole: UserRole;
-  content: string;
-  createdAt: string;
-  status: 'open' | 'in_review' | 'resolved';
-}
-
-export interface AuditLogEntry {
-  id: string;
-  timestamp: string;
-  year?: string;
-  evaluationPeriod?: string;
-  authorUid?: string;
-  authorName: string;
-  authorRole: UserRole;
-  satkerNo: number;
-  satkerName: string;
-  indicatorKey: string;
-  indicatorLabel: string;
-  oldValue: number | string | null;
-  newValue: number | string | null;
-  reason: string;
-}
-
 export interface SummaryThresholdResult {
   indicatorKey: string;
   label: string;
@@ -140,8 +108,6 @@ export interface AppConfiguration {
   dataSheetName?: string;
   usersSheetName?: string;
   configSheetName?: string;
-  auditSheetName?: string;
-  commentsSheetName?: string;
   updatedBy?: string;
   updatedAt?: string;
 }
