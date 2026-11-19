@@ -144,16 +144,6 @@ export const Header: React.FC<HeaderProps> = ({ onOpenLoginModal }) => {
               Spreadsheet
             </button>
             <button
-              onClick={() => setActiveTab('audit')}
-              className={`px-2.5 py-1.5 rounded-md transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
-                activeTab === 'audit'
-                  ? 'bg-blue-50 dark:bg-blue-950/60 text-blue-900 dark:text-blue-200 font-semibold'
-                  : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800'
-              }`}
-            >
-              Log
-            </button>
-            <button
               onClick={() => setActiveTab('users')}
               className={`px-2.5 py-1.5 rounded-md transition-colors whitespace-nowrap shrink-0 flex items-center gap-1.5 cursor-pointer ${
                 activeTab === 'users'
